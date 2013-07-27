@@ -57,9 +57,26 @@ class TicTacToe:
                         ]
 
 	def checkWin(self):
-		# using the self.wins instance variable, put  some logic here 
-		# to check if a player has won
-		return False
+		# this method works by checking each winning combination for a win
+		for combination in self.wins:
+                        cellowners = {}
+                        for cell in combination:
+                                if self.owners[cell] in cellowners:
+                                        cellowners[self.owners[cell]] += 1
+                                else:
+                                        cellowners[self.owners[cell]] = 1
+
+                        # check to see if any of the owners are winners
+                        for owner, total in cellowners.iteritems():
+                                if total == 3:
+                                        return owner
+
+                if len(self.available) == 0:
+                        # no more available sqaure, so the game ended in a CATS draw
+                        return 'CATS'
+
+                # otherwise, no one has won yet
+                return False
 
 	def counterMove(self, num):
 		# for now, we are justing countering randomly
@@ -114,13 +131,16 @@ class TicTacToe:
                                 if winner == self.cmarker:
                                         print "\nComputer (" + winner + ") won!"
                                 elif winner == self.omarker:
-                                        print "\nyou + won!"
+                                        print "\nyou won!"
 
                                 self.gameOver()
 
                         elif winner and winner.upper() == 'CATS':
                                 print '\nCATS'
                                 self.gameOver()
+
+	def minimalMode(self):
+                self.mode = 'minimal'
 
 	def play(self):
 
