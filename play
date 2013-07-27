@@ -17,5 +17,5 @@ specify the corresponding number...
 print welcome
 game = TicTacToe('o');
 game.drawBoard()
-game.minimalMode()
+#game.minimalMode()
 game.play()

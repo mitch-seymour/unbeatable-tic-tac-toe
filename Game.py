@@ -124,10 +124,37 @@ class TicTacToe:
 
                 # print the board, with the interpolated values, to the screen
                 print self.board % strowners
+		
 
+	def firstAvailable(self, combination):
+                # find the first available cell in a combination of cells
+		for i in combination:
+                        if i in self.available:
+                                return i
+
+                return False
+
+	
 	def gameOver(self):
+                
+		# show the game over message and exit
 		self.drawBoard()
+		message = """
+~~~~~~~~~~~~~~~~~~~~~
+
+Game Over!
+
+Outcome:
+"""
+		message += self.outcome
+
+
+		message += """
+~~~~~~~~~~~~~~~~~~~~~
+"""
+		print message
                 sys.exit(0)
+
 
 	def howManyOwnedBy(self, char, combination):
                 num = 0
@@ -136,13 +163,6 @@ class TicTacToe:
                                 num += 1
 
                 return num
-
-	def firstAvailable(self, combination):
-                for i in combination:
-                        if i in self.available:
-                                return i
-
-                return False
 
 	def makeMove(self, char, num):
                 # increment the turn count
@@ -160,14 +180,14 @@ class TicTacToe:
                 if winner:
                         if winner and winner.upper() != 'CATS':
                                 if winner == self.cmarker:
-                                        print "\nComputer (" + winner + ") won!"
+                                        self.outcome = "\nComputer (" + winner + ") won!"
                                 elif winner == self.omarker:
-                                        print "\nyou won!"
+                                        self.outcome = "\nyou won!"
 
                                 self.gameOver()
 
                         elif winner and winner.upper() == 'CATS':
-                                print '\nCATS'
+                                self.outcome = '\nCATS'
                                 self.gameOver()
 
 	def minimalMode(self):
@@ -193,7 +213,9 @@ class TicTacToe:
 
                                                 # opponent made a valid move
                                                 self.makeMove(self.omarker, num)
-                                                self.counterMove(num)
+                                                print '\nYou placed "' + self.omarker + '" on cell ' + str(num)
+						self.counterMove(num)	
+						print 'Computer placed "' + self.cmarker + '" on cell ' + str(self.lastMove)
                                                 self.drawBoard()
 
                                         else:
