@@ -17,3 +17,4 @@ specify the corresponding number...
 print welcome
 game = TicTacToe('o');
 game.drawBoard()
+game.play()

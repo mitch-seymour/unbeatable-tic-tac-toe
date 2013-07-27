@@ -56,6 +56,22 @@ class TicTacToe:
                                 [3, 5, 7]
                         ]
 
+	def checkWin(self):
+		# using the self.wins instance variable, put  some logic here 
+		# to check if a player has won
+		return False
+
+	def counterMove(self, num):
+		# for now, we are justing countering randomly
+		# our strategic counters will eventually be
+		# embedded in this method
+		if (len(self.available) > 0):
+			randomcell = self.available[0]
+			self.makeMove(self.cmarker, randomcell)
+		
+		else:
+			self.gameOver()
+
 	def drawBoard(self):
 
                 # interpolate the board with the cell owners
@@ -74,4 +90,72 @@ class TicTacToe:
                         strowners[str(i)] = j
 
                 # print the board, with the interpolated values, to the screen
-                print self.board % strowners	
+                print self.board % strowners
+
+	def gameOver(self):
+		self.drawBoard()
+                sys.exit(0)
+
+	def makeMove(self, char, num):
+                # increment the turn count
+                self.turnCount += 1
+                # remove the cell from the available cells
+                if num:
+                        self.available.remove(num)
+                        # update the owner of the cell
+                        self.owners[num] = char
+                        # save the last move
+                        self.lastMove = num
+                # check to see if this move led to a win
+                winner = self.checkWin()
+
+                if winner:
+                        if winner and winner.upper() != 'CATS':
+                                if winner == self.cmarker:
+                                        print "\nComputer (" + winner + ") won!"
+                                elif winner == self.omarker:
+                                        print "\nyou + won!"
+
+                                self.gameOver()
+
+                        elif winner and winner.upper() == 'CATS':
+                                print '\nCATS'
+                                self.gameOver()
+
+	def play(self):
+
+                try:
+
+                        self.firstMove = None
+
+                        while True:
+
+                                num = raw_input("Which cell would you like to select?")
+
+                                if num.isdigit():
+
+                                        num = int(num)
+                                        if num in self.available:
+                                                # check to see if this is the first move
+                                                if self.turnCount == 0:
+                                                        firstMove = num
+
+                                                # opponent made a valid move
+                                                self.makeMove(self.omarker, num)
+                                                self.counterMove(num)
+                                                self.drawBoard()
+
+                                        else:
+                                                print str(num) + " is not available"
+                                else:
+                                        print str(num) + " isn't a number!"
+
+                        checkWin()
+
+                except KeyboardInterrupt:
+                        # user exited the game
+                        print "\n\nExiting the tic tac toe game\n"
+                except Exception:
+                        traceback.print_exc(file=sys.stdout)
+                sys.exit(0)
+			
