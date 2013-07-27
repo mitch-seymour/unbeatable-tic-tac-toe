@@ -79,15 +79,31 @@ class TicTacToe:
                 return False
 
 	def counterMove(self, num):
-		# for now, we are justing countering randomly
-		# our strategic counters will eventually be
-		# embedded in this method
-		if (len(self.available) > 0):
-			randomcell = self.available[0]
-			self.makeMove(self.cmarker, randomcell)
-		
-		else:
-			self.gameOver()
+                # strategic counters
+                if self.turnCount == 1 and num == 5:
+                        self.makeMove(self.cmarker, 7)
+                        return
+                elif self.turnCount == 1 and (num == 1 or num == 3 or num == 7 or num == 9):
+                        # the user selected a corner for their first move, so we need to select the center       
+                        self.makeMove(self.cmarker, 5)
+                        return
+                elif self.turnCount == 3 and self.firstMove == 5 and self.lastMove == 3:
+                        # special condition
+                        self.makeMove(self.cmarker, 1)
+                        return
+                else:
+                        # see if we have a winning move
+                        for combination in self.wins:
+                                if self.howManyOwnedBy(self.cmarker, combination) > 1 and self.howManyOwnedBy(self.omarker, combination) == 0:
+                                        cell = self.firstAvailable(combination)
+                                        if cell:
+                                                self.makeMove(self.cmarker, cell)
+                                                return
+
+
+                # worst case scenario, we have no strategic move and we place our marker randomly
+                self.simpleCounter(num)
+
 
 	def drawBoard(self):
 
@@ -112,6 +128,21 @@ class TicTacToe:
 	def gameOver(self):
 		self.drawBoard()
                 sys.exit(0)
+
+	def howManyOwnedBy(self, char, combination):
+                num = 0
+                for i in combination:
+                        if self.owners[i] == char:
+                                num += 1
+
+                return num
+
+	def firstAvailable(self, combination):
+                for i in combination:
+                        if i in self.available:
+                                return i
+
+                return False
 
 	def makeMove(self, char, num):
                 # increment the turn count
@@ -150,7 +181,7 @@ class TicTacToe:
 
                         while True:
 
-                                num = raw_input("Which cell would you like to select?")
+                                num = raw_input("Which cell would you like to select? ")
 
                                 if num.isdigit():
 
@@ -178,4 +209,32 @@ class TicTacToe:
                 except Exception:
                         traceback.print_exc(file=sys.stdout)
                 sys.exit(0)
-			
+
+	def simpleCounter(self, num):
+                # remove the winning combinations that can no longer be played
+                self.updateWins()
+
+                # check each remaining winning combination that contains the opponent's last move
+                for combination in self.wins:
+                        if self.lastMove in combination:
+                                if self.howManyOwnedBy(self.omarker, combination) > 1:
+                                        self.makeMove(self.cmarker, self.firstAvailable(combination))
+                                        return False
+
+                # make a somewhat random move. it doesn't matter where, we can't lose at this point
+                for combination in self.wins:
+                        cell = self.firstAvailable(combination)
+                        if cell:
+                                self.makeMove(self.cmarker, cell)
+                                return False
+		
+	def updateWins(self):
+		# check each remaining winning combination to see if it's still possible to win with this set of cells
+                for combination in self.wins:
+                        computer = self.howManyOwnedBy(self.cmarker, combination)
+                        opponent = self.howManyOwnedBy(self.omarker, combination)
+		
+			# check to see if a computer and opponent marker both exist in the combination.
+                        if computer > 0 and opponent > 0:
+                                # a block occurred
+                                self.wins.remove(combination)	
