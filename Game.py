@@ -187,7 +187,7 @@ Outcome:
                                 self.gameOver()
 
                         elif winner and winner.upper() == 'CATS':
-                                self.outcome = '\nCATS'
+                                self.outcome = "\nCat's game"
                                 self.gameOver()
 
 	def minimalMode(self):
